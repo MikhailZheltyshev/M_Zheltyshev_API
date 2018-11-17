@@ -87,4 +87,18 @@ public class DataProviders {
                 {new String[]{"1better", "us2e", "airplane3"}, EN}
         };
     }
+
+    @DataProvider(parallel = true)
+    public Object[][] languagesDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {UK},
+
+                //Russian case
+                {RU},
+
+                //English case
+                {EN}
+        };
+    }
 }

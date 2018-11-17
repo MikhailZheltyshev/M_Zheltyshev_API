@@ -1,14 +1,22 @@
 import beans.YandexSpellerAnswer;
+import com.google.gson.JsonSyntaxException;
 import core.YandexSpellerApi;
+import core.YandexSpellerConstants;
 import dataProviders.DataProviders;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 
 import static core.YandexSpellerConstants.Language;
+import static core.YandexSpellerConstants.Language.*;
+import static core.YandexSpellerConstants.PARAM_TEXT;
+import static core.YandexSpellerConstants.YANDEX_SPELLER_API_URI_TEXT;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 public class HWCheckTextsYaSpellerJSON {
 
@@ -97,4 +105,22 @@ public class HWCheckTextsYaSpellerJSON {
         }
         soft.assertAll();
     }
+
+    @Test
+    public void invalidOptionTest() {
+        RestAssured
+                .given()
+                .queryParams("text", "test")
+                .param("options", "948359830485")
+                .log().all()
+                .when()
+                .get(YANDEX_SPELLER_API_URI_TEXT)
+                .then()
+                //Assert that server returns "client-side" error in case of incorrect option was set in the request
+                .statusCode(Matchers.is(both(greaterThan(399)).and(lessThan(500))));
+
+
+    }
+
+
 }

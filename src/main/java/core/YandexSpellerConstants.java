@@ -34,7 +34,8 @@ public class YandexSpellerConstants {
     public enum Language {
         RU("ru"),
         UK("uk"),
-        EN("en");
+        EN("en"),
+        UNSOPORTED("fr");
         private String languageCode;
         public String langCode(){return languageCode;}
 
