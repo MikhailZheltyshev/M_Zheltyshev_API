@@ -57,9 +57,29 @@ public class HWCheckTextsYaSpellerJSON {
                 soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty:");
             }
         }
-
         soft.assertAll();
     }
+
+    @Test(dataProvider = "correctWordsDataProvider", dataProviderClass = DataProviders.class)
+    public void checkNoSuggestionForCorrectWords(String[] texts, Language lang) {
+        SoftAssert soft = new SoftAssert();
+
+        List<List<YandexSpellerAnswer>> answers =
+                YandexSpellerApi.getYandexSpellerAnswersArray(
+                        YandexSpellerApi.with().texts(texts).language(lang).callApi());
+
+        //Assert that there are correct number of answers received in response
+        assertThat(answers.size(), equalTo(texts.length));
+
+        //Assert that suggestion are expected
+        for (int i = 0; i < texts.length; i++) {
+            //Check that current response array item is empty
+            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for correct words:");
+        }
+        soft.assertAll();
+    }
+
+
 
 
 }

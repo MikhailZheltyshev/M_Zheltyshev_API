@@ -59,4 +59,18 @@ public class DataProviders {
                                 Arrays.asList("Washington")}}
         };
     }
+
+    @DataProvider(parallel = true)
+    public Object[][] correctWordsDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {new String[]{"вечеря", "коханка", "рідина"}, UK},
+
+                //Russian case
+                {new String[]{"атмосфера", "ужин", "море"}, RU},
+
+                //English case
+                {new String[]{"better", "use", "airplane"}, EN}
+        };
+    }
 }
