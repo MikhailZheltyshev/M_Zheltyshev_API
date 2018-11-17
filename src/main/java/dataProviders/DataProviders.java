@@ -12,7 +12,7 @@ import static core.YandexSpellerConstants.Language.*;
 public class DataProviders {
 
     @DataProvider(parallel = true)
-    public Object[][] capitalizationDataProvider() {
+    public Object[][] wrongWordDataProvider() {
         return new Object[][]{
                 //Ukrainian case
                 {new String[]{"кизак", "творина", "яблако"},
@@ -34,6 +34,29 @@ public class DataProviders {
                         new List[]{Arrays.asList("support", "supports", "supported"),
                                 Arrays.asList("russia", "russian", "rusian"),
                                 Arrays.asList("sponge", "spanje", "spanked")}}
+        };
+    }
+
+    @DataProvider(parallel = true)
+    public Object[][] capitalizationDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {new String[]{"олександр", "київ"},
+                        UK,
+                        new List[]{Arrays.asList("Олександр"),
+                                Arrays.asList("Київ")}},
+
+                //Russian case
+                {new String[]{"евгений", "москва"},
+                        RU,
+                        new List[]{Arrays.asList("Евгений"),
+                                Arrays.asList("Москва")}},
+
+                //English case
+                {new String[]{"john", "washington"},
+                        EN,
+                        new List[]{Arrays.asList("john"),
+                                Arrays.asList("Washington")}}
         };
     }
 }
