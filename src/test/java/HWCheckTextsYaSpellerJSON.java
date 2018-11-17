@@ -79,7 +79,22 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
+    @Test(dataProvider = "alphaNumericStringsDataProvider", dataProviderClass = DataProviders.class)
+    public void checkIgnoreDigits(String[] texts, Language lang) {
+        SoftAssert soft = new SoftAssert();
 
+        List<List<YandexSpellerAnswer>> answers =
+                YandexSpellerApi.getYandexSpellerAnswersArray(
+                        YandexSpellerApi.with().texts(texts).language(lang).options("512").callApi());
 
+        //Assert that there are correct number of answers received in response
+        assertThat(answers.size(), equalTo(texts.length));
 
+        //Assert that suggestion are expected
+        for (int i = 0; i < texts.length; i++) {
+            //Check that current response array item is empty
+            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for alphanumeric strings:");
+        }
+        soft.assertAll();
+    }
 }

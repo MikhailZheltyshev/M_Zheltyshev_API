@@ -73,4 +73,18 @@ public class DataProviders {
                 {new String[]{"better", "use", "airplane"}, EN}
         };
     }
+
+    @DataProvider(parallel = true)
+    public Object[][] alphaNumericStringsDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {new String[]{"1вечеря", "коха2нка", "рідина3"}, UK},
+
+                //Russian case
+                {new String[]{"1атмосфера", "уж2ин", "море3"}, RU},
+
+                //English case
+                {new String[]{"1better", "us2e", "airplane3"}, EN}
+        };
+    }
 }
