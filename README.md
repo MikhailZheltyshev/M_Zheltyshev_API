@@ -5,6 +5,6 @@ All HW tests are stored in /src/test/java/CheckTextsTestsHW.java
 
 You can also run the whole hw test suite by executing following command via terminal (from project root): 
 
-```cmd
+```sh
 mvn clean test -DsuiteXmlFile=testng.xml
 ```
