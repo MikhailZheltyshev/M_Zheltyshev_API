@@ -2,12 +2,15 @@ import beans.YandexSpellerAnswer;
 import core.YandexSpellerApi;
 import dataProviders.DataProviders;
 import io.restassured.RestAssured;
+import org.apache.http.HttpStatus;
+import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 
 import static core.YandexSpellerConstants.*;
+import static core.YandexSpellerConstants.Language.*;
 import static core.YandexSpellerConstants.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -114,9 +117,9 @@ public class HWCheckTextsYaSpellerJSON {
                 .when()
                 .get(YANDEX_SPELLER_API_URI_TEXTS)
                 .then()
-                //Assert that server returns "client-side" error in case of incorrect option was set in the request
-                .assertThat()
-                .statusCode(is(both(greaterThan(399)).and(lessThan(500))));
+                //Assert that server returns "Bad Request" in case of incorrect option value was set in the request
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
     }
 
     @Test(description = "Check IGNORE_URLS option for all supported languages",
@@ -158,4 +161,21 @@ public class HWCheckTextsYaSpellerJSON {
         }
         soft.assertAll();
     }
+
+    @Test(description = "Check the server's response for the request with incorrect language value")
+    public void unsupportedLanguageTest() {
+        RestAssured
+                .given()
+                .queryParams(PARAM_TEXT, "This is test")
+                .param(PARAM_LANG, UNSUPPORTED_LANG.langCode())
+                .log().all()
+                .when()
+                .get(YANDEX_SPELLER_API_URI_TEXTS)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
+    }
+
+
 }

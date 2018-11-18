@@ -35,13 +35,15 @@ public class YandexSpellerConstants {
         RU("ru"),
         UK("uk"),
         EN("en"),
-        UNSOPORTED("fr");
+        UNSUPPORTED_LANG("fr");
         private String languageCode;
         public String langCode(){return languageCode;}
 
         private Language(String lang) {
             this.languageCode = lang;
         }
+
+
     }
 
     public enum Options {

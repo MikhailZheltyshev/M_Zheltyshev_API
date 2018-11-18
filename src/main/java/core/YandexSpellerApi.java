@@ -41,7 +41,6 @@ public class YandexSpellerApi {
             return this;
         }
 
-        //
         public ApiBuilder texts(String... texts) {
             List<String> textsContainer = new ArrayList<>();
             textsContainer.addAll(Arrays.asList(texts));
