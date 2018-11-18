@@ -17,7 +17,7 @@ import static core.YandexSpellerConstants.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class HWCheckTextsYaSpellerJSON {
+public class CheckTextsTestsHW {
 
     @Test(description = "Check correction of wrong words for all supported languages",
             dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class)
@@ -145,7 +145,7 @@ public class HWCheckTextsYaSpellerJSON {
         //Assert that suggestion are expected
         for (int i = 0; i < texts.length; i++) {
             //Check that current response array item is not empty
-            soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty for strings with repeated words:");
+            soft.assertFalse(answers.get(i).isEmpty(), "Received response has no suggestions for strings with repeated words:");
         }
         soft.assertAll();
     }

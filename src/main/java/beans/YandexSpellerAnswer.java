@@ -31,7 +31,7 @@ public class YandexSpellerAnswer {
     public String word;
     @SerializedName("s")
     @Expose
-    public List<String> s = new ArrayList<>();
+    public List<String> s = new ArrayList<String>();
 
     @Override
     public String toString() {
@@ -48,7 +48,7 @@ public class YandexSpellerAnswer {
         if (other == this) {
             return true;
         }
-        if ((other instanceof YandexSpellerAnswer) == false) {
+        if (!(other instanceof YandexSpellerAnswer)) {
             return false;
         }
         YandexSpellerAnswer rhs = ((YandexSpellerAnswer) other);

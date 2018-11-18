@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Ya Speller suite" verbose="1">
+
+    <test name="CheckTexts REST tests">
+        <classes>
+            <class name="CheckTextsTestsHW"/>
+        </classes>
+    </test>
+
+</suite>
