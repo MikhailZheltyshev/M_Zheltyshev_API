@@ -8,6 +8,7 @@ public class YandexSpellerConstants {
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_OPTIONS = "options";
     public static final String PARAM_LANG = "lang";
+    public static final String PARAM_FORMAT = "format";
     public static final String WRONG_WORD_UK = "питаня";
     public static final String WORD_WITH_WRONG_CAPITAL = "moscow";
     public static final String WORD_WITH_LEADING_DIGITS = "11" + SimpleWord.BROTHER.corrVer;
@@ -59,6 +60,23 @@ public class YandexSpellerConstants {
         @Override
         public String toString() {
             return optionValue;
+        }
+    }
+
+    public enum Formats {
+        PLAIN_TEXT("plain"),
+        HTML_TEXT("html"),
+        UNSUPPORTED_FORMAT("Unsupported");
+        public String formatType(){return formatValue;}
+
+        private String formatValue;
+        private Formats(String value){
+            this.formatValue = value;
+        }
+
+        @Override
+        public String toString() {
+            return formatValue;
         }
     }
 }

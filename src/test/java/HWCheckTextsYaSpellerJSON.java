@@ -10,6 +10,7 @@ import org.testng.asserts.SoftAssert;
 import java.util.List;
 
 import static core.YandexSpellerConstants.*;
+import static core.YandexSpellerConstants.Formats.UNSUPPORTED_FORMAT;
 import static core.YandexSpellerConstants.Language.*;
 import static core.YandexSpellerConstants.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -175,6 +176,21 @@ public class HWCheckTextsYaSpellerJSON {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
+    }
+
+    @Test(description = "Check the server's response for the request with incorrect text format type")
+    public void incorrectFormatTest() {
+        RestAssured
+                .given()
+                .queryParams(PARAM_TEXT, "This is test")
+                .param(PARAM_FORMAT, UNSUPPORTED_FORMAT.formatType())
+                .log().all()
+                .when()
+                .get(YANDEX_SPELLER_API_URI_TEXTS)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("SpellerService: Invalid parameter 'format'"));
     }
 
 
