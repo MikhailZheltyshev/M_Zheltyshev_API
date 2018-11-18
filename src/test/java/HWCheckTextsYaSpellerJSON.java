@@ -2,6 +2,7 @@ import beans.YandexSpellerAnswer;
 import core.YandexSpellerApi;
 import dataProviders.DataProviders;
 import io.restassured.RestAssured;
+import io.restassured.http.Method;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
@@ -9,17 +10,17 @@ import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 
-import static core.YandexSpellerConstants.*;
 import static core.YandexSpellerConstants.Formats.UNSUPPORTED_FORMAT;
-import static core.YandexSpellerConstants.Language.*;
+import static core.YandexSpellerConstants.*;
+import static core.YandexSpellerConstants.Language.UNSUPPORTED_LANG;
 import static core.YandexSpellerConstants.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class HWCheckTextsYaSpellerJSON {
 
-    @Test(description = "Check correction of wrong words for all supported languages"
-            , dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class)
+    @Test(description = "Check correction of wrong words for all supported languages",
+            dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class)
     public void checkWrongWordsCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
         SoftAssert soft = new SoftAssert();
 
@@ -43,7 +44,7 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
-
+    // Seems to be a BUG - no correction for words with wrong capitalization
     @Test(description = "Check correction of wrong capitalization for all supported languages",
             dataProvider = "capitalizationDataProvider", dataProviderClass = DataProviders.class)
     public void checkCapitalizationCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
@@ -95,7 +96,7 @@ public class HWCheckTextsYaSpellerJSON {
 
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
-                        YandexSpellerApi.with().texts(texts).language(lang).options(IGNORE_CAPITALIZATION).callApi());
+                        YandexSpellerApi.with().texts(texts).language(lang).options(IGNORE_DIGITS).callApi());
 
         //Assert that there are correct number of answers received in response
         assertThat(answers.size(), equalTo(texts.length));
@@ -106,21 +107,6 @@ public class HWCheckTextsYaSpellerJSON {
             soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for alphanumeric strings:");
         }
         soft.assertAll();
-    }
-
-    @Test(description = "Check the server's response for the request with incorrect options value")
-    public void invalidOptionTest() {
-        RestAssured
-                .given()
-                .queryParams(PARAM_TEXT, "test")
-                .param(PARAM_OPTIONS, "948359830485")
-                .log().all()
-                .when()
-                .get(YANDEX_SPELLER_API_URI_TEXTS)
-                .then()
-                //Assert that server returns "Bad Request" in case of incorrect option value was set in the request
-                .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.equalTo("SpellerService: Invalid parameter 'options'"));
     }
 
     @Test(description = "Check IGNORE_URLS option for all supported languages",
@@ -143,6 +129,7 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
+    //BUG - server answers with an empty responses for requests with repeated words.
     @Test(description = "Check FIND_REPEAT_WORDS option for all supported languages",
             dataProvider = "repeatWordsDataProvider", dataProviderClass = DataProviders.class)
     public void checkRepeatWords(String[] texts, Language lang) {
@@ -163,6 +150,23 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
+    // Server throws 504 error for incorrect "options" value - unexpected behavior.
+    @Test(description = "Check the server's response for the request with incorrect options value")
+    public void invalidOptionTest() {
+        RestAssured
+                .given()
+                .queryParams(PARAM_TEXT, "test")
+                .param(PARAM_OPTIONS, "948359830485")
+                .log().all()
+                .when()
+                .get(YANDEX_SPELLER_API_URI_TEXTS)
+                .then()
+                //Assert that server returns "Bad Request" in case of incorrect option value was set in the request
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("SpellerService: Invalid parameter 'options'"));
+    }
+
+    //BUG - server unexpectedly returns "200" status code in case of wrong lang options was used
     @Test(description = "Check the server's response for the request with incorrect language value")
     public void unsupportedLanguageTest() {
         RestAssured
@@ -213,5 +217,17 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
-
+    @Test(description = "Check all methods for request and corresponding server responses",
+            dataProviderClass = DataProviders.class, dataProvider = "methodsDataProvider")
+    public void checkRequestWithDifferentMethods(Method requestMethod, int expectedCode, String expectedStatusLine) {
+        YandexSpellerApi.with()
+                .texts("This", "is", "test")
+                .requestWithMethod(requestMethod)
+                .callApi()
+                .then()
+                .assertThat()
+                .statusCode(expectedCode)
+                .and()
+                .statusLine(expectedStatusLine);
+    }
 }

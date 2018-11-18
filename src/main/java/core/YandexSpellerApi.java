@@ -8,6 +8,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
+import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
@@ -16,6 +17,7 @@ import org.apache.http.HttpStatus;
 import java.util.*;
 
 import static core.YandexSpellerConstants.*;
+import static io.restassured.http.Method.*;
 import static org.hamcrest.Matchers.lessThan;
 
 public class YandexSpellerApi {
@@ -28,6 +30,9 @@ public class YandexSpellerApi {
     private HashMap<String, String> params = new HashMap<>();
     //Collection to store some multi params (e.g. collection of texts)
     private HashMap<String, List<String>> multiParams = new HashMap<>();
+
+    //Default value of request method is GET
+    public Method currentMethod = GET;
 
     public static class ApiBuilder {
         YandexSpellerApi spellerApi;
@@ -63,12 +68,19 @@ public class YandexSpellerApi {
             return this;
         }
 
+        public ApiBuilder requestWithMethod(Method method) {
+            spellerApi.currentMethod = method;
+            return this;
+        }
+
         public Response callApi() {
             return RestAssured.with()
                     .queryParams(spellerApi.params)
                     .queryParams(spellerApi.multiParams)
                     .log().all()
-                    .get(YANDEX_SPELLER_API_URI_TEXTS).prettyPeek();
+                    //get() method is replaced with more common request() to allow changing of request method type
+                    .request(spellerApi.currentMethod, YANDEX_SPELLER_API_URI_TEXTS)
+                    .prettyPeek();
         }
     }
 
@@ -89,7 +101,9 @@ public class YandexSpellerApi {
         try {
             return new Gson().fromJson(response.asString().trim(), new TypeToken<List<List<YandexSpellerAnswer>>>() {
             }.getType());
-        } catch (JsonSyntaxException ex){ return new ArrayList<>();}
+        } catch (JsonSyntaxException ex) {
+            return new ArrayList<>();
+        }
     }
 
 

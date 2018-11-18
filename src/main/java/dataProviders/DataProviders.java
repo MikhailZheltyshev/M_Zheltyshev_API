@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static core.YandexSpellerConstants.Language.*;
+import static io.restassured.http.Method.*;
+import static io.restassured.http.Method.PATCH;
+import static org.apache.http.HttpStatus.SC_METHOD_NOT_ALLOWED;
+import static org.apache.http.HttpStatus.SC_OK;
 
 public class DataProviders {
 
@@ -130,8 +134,8 @@ public class DataProviders {
 
                 //Russian case
                 {new String[]{"Я подумаю подумаю над этим позже.",
-                                "Он никогда не не был в Африке.",
-                                "Его имя неизвестно неизвестно."
+                        "Он никогда не не был в Африке.",
+                        "Его имя неизвестно неизвестно."
                 },
                         RU},
 
@@ -159,6 +163,19 @@ public class DataProviders {
                         "I'll be be back.",
                         "You better better believe it."},
                         RU}
+        };
+    }
+
+    @DataProvider(parallel = true)
+    public Object[][] methodsDataProvider() {
+        return new Object[][]{
+                {GET, SC_OK, "HTTP/1.1 200 OK"},
+                {POST, SC_OK, "HTTP/1.1 200 OK"},
+                {HEAD, SC_OK, "HTTP/1.1 200 OK"},
+                {OPTIONS, SC_OK, "HTTP/1.1 200 OK"},
+                {PUT, SC_METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method not allowed"},
+                {PATCH, SC_METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method not allowed"},
+                {DELETE, SC_METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method not allowed"}
         };
     }
 }
