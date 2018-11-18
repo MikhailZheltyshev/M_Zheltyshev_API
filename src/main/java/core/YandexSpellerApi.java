@@ -89,11 +89,7 @@ public class YandexSpellerApi {
         try {
             return new Gson().fromJson(response.asString().trim(), new TypeToken<List<List<YandexSpellerAnswer>>>() {
             }.getType());
-        } catch (JsonSyntaxException ex){
-            System.out.println("========THERE WAS AN ERROR ON DESERIALIZATION OF THE RESPONSE===========");
-            System.out.println(response.asString());
-        }
-        return new ArrayList<>();
+        } catch (JsonSyntaxException ex){ return new ArrayList<>();}
     }
 
 

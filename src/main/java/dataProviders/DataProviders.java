@@ -142,4 +142,23 @@ public class DataProviders {
                         EN}
         };
     }
+
+    @DataProvider(parallel = true)
+    public Object[][] wrongLanguageWordsDataProvider() {
+        return new Object[][]{
+
+                //Russian case
+                {new String[]{"Я подумаю подумаю над этим позже.",
+                        "Он никогда не не был в Африке.",
+                        "Его имя неизвестно неизвестно."
+                },
+                        EN},
+
+                //English case
+                {new String[]{"It supposed to be in your your closet.",
+                        "I'll be be back.",
+                        "You better better believe it."},
+                        RU}
+        };
+    }
 }

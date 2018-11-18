@@ -120,7 +120,7 @@ public class HWCheckTextsYaSpellerJSON {
                 .then()
                 //Assert that server returns "Bad Request" in case of incorrect option value was set in the request
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
+                .body(Matchers.equalTo("SpellerService: Invalid parameter 'options'"));
     }
 
     @Test(description = "Check IGNORE_URLS option for all supported languages",
@@ -191,6 +191,26 @@ public class HWCheckTextsYaSpellerJSON {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("SpellerService: Invalid parameter 'format'"));
+    }
+
+    @Test(description = "Check wrong language selection",
+            dataProvider = "wrongLanguageWordsDataProvider", dataProviderClass = DataProviders.class)
+    public void checkWrongLanguageWords(String[] texts, Language lang) {
+        SoftAssert soft = new SoftAssert();
+
+        List<List<YandexSpellerAnswer>> answers =
+                YandexSpellerApi.getYandexSpellerAnswersArray(
+                        YandexSpellerApi.with().texts(texts).language(lang).callApi());
+
+        //Assert that there are correct number of answers received in response
+        assertThat(answers.size(), equalTo(texts.length));
+
+        //Assert that suggestion are expected
+        for (int i = 0; i < texts.length; i++) {
+            //Check that current response array item is not empty
+            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for strings with wrong language words:");
+        }
+        soft.assertAll();
     }
 
 
