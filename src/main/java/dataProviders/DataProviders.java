@@ -101,4 +101,45 @@ public class DataProviders {
                 {EN}
         };
     }
+
+    @DataProvider(parallel = true)
+    public Object[][] URLDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {new String[]{"https://sinoptik.ua/", "https://olx.ua/", "https://tsn.ua/"},
+                        UK},
+
+                //Russian case
+                {new String[]{"https://yandex.ru/", "https://mail.ru/", "https://rambler.ru/"},
+                        RU},
+
+                //English case
+                {new String[]{"https://facebook.com/", "https://youtube.com/", "https://yahoo.com/"},
+                        EN}
+        };
+    }
+
+    @DataProvider(parallel = true)
+    public Object[][] repeatWordsDataProvider() {
+        return new Object[][]{
+                //Ukrainian case
+                {new String[]{"Він дуже любив любив кататися на лижах.",
+                        "Сьогодні дуже жаркий день день.",
+                        "Я втратив втратив ключі."},
+                        UK},
+
+                //Russian case
+                {new String[]{"Я подумаю подумаю над этим позже.",
+                                "Он никогда не не был в Африке.",
+                                "Его имя неизвестно неизвестно."
+                },
+                        RU},
+
+                //English case
+                {new String[]{"It supposed to be in your your closet.",
+                        "I'll be be back.",
+                        "You better better believe it."},
+                        EN}
+        };
+    }
 }

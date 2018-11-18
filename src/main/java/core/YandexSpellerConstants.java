@@ -43,4 +43,20 @@ public class YandexSpellerConstants {
             this.languageCode = lang;
         }
     }
+
+    public enum Options {
+        IGNORE_DIGITS("2"),
+        IGNORE_URLS("4"),
+        FIND_REPEAT_WORDS("8"),
+        IGNORE_CAPITALIZATION("512");
+        private String optionValue;
+        private Options(String option){
+            this.optionValue = option;
+        }
+
+        @Override
+        public String toString() {
+            return optionValue;
+        }
+    }
 }
