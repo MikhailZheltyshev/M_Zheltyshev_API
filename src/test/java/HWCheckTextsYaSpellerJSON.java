@@ -44,7 +44,7 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
-    // Seems to be a BUG - no correction for words with wrong capitalization
+    // Seems to be a BUG - no correction for words with wrong capitalization.
     @Test(description = "Check correction of wrong capitalization for all supported languages",
             dataProvider = "capitalizationDataProvider", dataProviderClass = DataProviders.class)
     public void checkCapitalizationCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
@@ -129,7 +129,7 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
-    //BUG - server answers with an empty responses for requests with repeated words.
+    //BUG - server answers with an empty responses for requests with repeated words even if the FIND_REPEAT_WORDS option activated.
     @Test(description = "Check FIND_REPEAT_WORDS option for all supported languages",
             dataProvider = "repeatWordsDataProvider", dataProviderClass = DataProviders.class)
     public void checkRepeatWords(String[] texts, Language lang) {
@@ -150,7 +150,7 @@ public class HWCheckTextsYaSpellerJSON {
         soft.assertAll();
     }
 
-    // Server throws 504 error for incorrect "options" value - unexpected behavior.
+    // Server always throws 504 error for incorrect "options" value - unexpected behavior.
     @Test(description = "Check the server's response for the request with incorrect options value")
     public void invalidOptionTest() {
         RestAssured
@@ -166,7 +166,7 @@ public class HWCheckTextsYaSpellerJSON {
                 .body(Matchers.equalTo("SpellerService: Invalid parameter 'options'"));
     }
 
-    //BUG - server unexpectedly returns "200" status code in case of wrong lang options was used
+    //BUG - server unexpectedly returns "200" status code in case of wrong lang options was sent in request
     @Test(description = "Check the server's response for the request with incorrect language value")
     public void unsupportedLanguageTest() {
         RestAssured
@@ -212,7 +212,7 @@ public class HWCheckTextsYaSpellerJSON {
         //Assert that suggestion are expected
         for (int i = 0; i < texts.length; i++) {
             //Check that current response array item is not empty
-            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for strings with wrong language words:");
+            soft.assertTrue(answers.get(i).isEmpty(), "Received response is empty for strings with wrong language words:");
         }
         soft.assertAll();
     }
