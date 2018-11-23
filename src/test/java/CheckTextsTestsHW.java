@@ -4,6 +4,7 @@ import dataProviders.DataProviders;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import org.apache.http.HttpStatus;
+import org.assertj.core.api.SoftAssertions;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
