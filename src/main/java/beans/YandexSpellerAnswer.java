@@ -16,16 +16,16 @@ public class YandexSpellerAnswer {
     public Integer code;
     @SerializedName("pos")
     @Expose
-    public Integer pos;
+    public Integer position;
     @SerializedName("row")
     @Expose
     public Integer row;
     @SerializedName("col")
     @Expose
-    public Integer col;
+    public Integer column;
     @SerializedName("len")
     @Expose
-    public Integer len;
+    public Integer length;
     @SerializedName("word")
     @Expose
     public String word;
@@ -35,12 +35,12 @@ public class YandexSpellerAnswer {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("code", code).append("pos", pos).append("row", row).append("col", col).append("len", len).append("word", word).append("suggestions", suggestions).toString();
+        return new ToStringBuilder(this).append("code", code).append("position", position).append("row", row).append("column", column).append("length", length).append("word", word).append("suggestions", suggestions).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(col).append(code).append(suggestions).append(len).append(pos).append(row).append(word).toHashCode();
+        return new HashCodeBuilder().append(column).append(code).append(suggestions).append(length).append(position).append(row).append(word).toHashCode();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class YandexSpellerAnswer {
             return false;
         }
         YandexSpellerAnswer rhs = ((YandexSpellerAnswer) other);
-        return new EqualsBuilder().append(col, rhs.col).append(code, rhs.code).append(suggestions, rhs.suggestions).append(len, rhs.len).append(pos, rhs.pos).append(row, rhs.row).append(word, rhs.word).isEquals();
+        return new EqualsBuilder().append(column, rhs.column).append(code, rhs.code).append(suggestions, rhs.suggestions).append(length, rhs.length).append(position, rhs.position).append(row, rhs.row).append(word, rhs.word).isEquals();
     }
 
 }

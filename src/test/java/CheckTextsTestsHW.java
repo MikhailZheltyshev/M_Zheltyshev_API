@@ -207,7 +207,7 @@ public class CheckTextsTestsHW {
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.equalTo("SpellerService: Invalid parameter 'format'"));
+                .body(Matchers.containsString("SpellerService: Invalid parameter 'format'"));
     }
 
     @Test(description = "Check wrong language selection",
