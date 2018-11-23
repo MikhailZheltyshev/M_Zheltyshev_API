@@ -20,7 +20,8 @@ import static org.hamcrest.Matchers.equalTo;
 public class CheckTextsTestsHW {
 
     @Test(description = "Check correction of wrong words for all supported languages",
-            dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkWrongWordsCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
         SoftAssert soft = new SoftAssert();
 
@@ -35,7 +36,7 @@ public class CheckTextsTestsHW {
         for (int i = 0; i < texts.length; i++) {
             //Check that current response array item is not empty
             if (!answers.get(i).isEmpty()) {
-                soft.assertEquals(answers.get(i).get(0).s, expectedSuggestions[i], "Proposed suggestion is not expected:");
+                soft.assertEquals(answers.get(i).get(0).suggestions, expectedSuggestions[i], "Proposed suggestion is not expected:");
             } else {
                 soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty:");
             }
@@ -46,7 +47,8 @@ public class CheckTextsTestsHW {
 
     // Seems to be a BUG - no correction for words with wrong capitalization.
     @Test(description = "Check correction of wrong capitalization for all supported languages",
-            dataProvider = "capitalizationDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "capitalizationDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkCapitalizationCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
         SoftAssert soft = new SoftAssert();
 
@@ -61,7 +63,7 @@ public class CheckTextsTestsHW {
         for (int i = 0; i < texts.length; i++) {
             //Check that current response array item is not empty
             if (!answers.get(i).isEmpty()) {
-                soft.assertEquals(answers.get(i).get(0).s, expectedSuggestions[i], "Proposed suggestion is not expected:");
+                soft.assertEquals(answers.get(i).get(0).suggestions, expectedSuggestions[i], "Proposed suggestion is not expected:");
             } else {
                 soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty:");
             }
@@ -70,7 +72,8 @@ public class CheckTextsTestsHW {
     }
 
     @Test(description = "Check there is no correction for correct words",
-            dataProvider = "correctWordsDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "correctWordsDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkNoSuggestionForCorrectWords(String[] texts, Language lang) {
         SoftAssert soft = new SoftAssert();
 
@@ -90,7 +93,8 @@ public class CheckTextsTestsHW {
     }
 
     @Test(description = "Check IGNORE_DIGITS option for all supported languages",
-            dataProvider = "alphaNumericStringsDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "alphaNumericStringsDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkIgnoreDigits(String[] texts, Language lang) {
         SoftAssert soft = new SoftAssert();
 
@@ -110,7 +114,8 @@ public class CheckTextsTestsHW {
     }
 
     @Test(description = "Check IGNORE_URLS option for all supported languages",
-            dataProvider = "URLDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "URLDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkIgnoreURLs(String[] texts, Language lang) {
         SoftAssert soft = new SoftAssert();
 
@@ -131,7 +136,8 @@ public class CheckTextsTestsHW {
 
     //BUG - server answers with an empty responses for requests with repeated words even if the FIND_REPEAT_WORDS option activated.
     @Test(description = "Check FIND_REPEAT_WORDS option for all supported languages",
-            dataProvider = "repeatWordsDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "repeatWordsDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkRepeatWords(String[] texts, Language lang) {
         SoftAssert soft = new SoftAssert();
 
@@ -151,7 +157,8 @@ public class CheckTextsTestsHW {
     }
 
     // Server always throws 504 error for incorrect "options" value - unexpected behavior.
-    @Test(description = "Check the server's response for the request with incorrect options value")
+    @Test(description = "Check the server'suggestions response for the request with incorrect options value",
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void invalidOptionTest() {
         RestAssured
                 .given()
@@ -167,7 +174,8 @@ public class CheckTextsTestsHW {
     }
 
     //BUG - server unexpectedly returns "200" status code in case of wrong lang options was sent in request
-    @Test(description = "Check the server's response for the request with incorrect language value")
+    @Test(description = "Check the server'suggestions response for the request with incorrect language value",
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void unsupportedLanguageTest() {
         RestAssured
                 .given()
@@ -182,7 +190,8 @@ public class CheckTextsTestsHW {
                 .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
     }
 
-    @Test(description = "Check the server's response for the request with incorrect text format type")
+    @Test(description = "Check the server'suggestions response for the request with incorrect text format type",
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void incorrectFormatTest() {
         RestAssured
                 .given()
@@ -198,7 +207,8 @@ public class CheckTextsTestsHW {
     }
 
     @Test(description = "Check wrong language selection",
-            dataProvider = "wrongLanguageWordsDataProvider", dataProviderClass = DataProviders.class)
+            dataProvider = "wrongLanguageWordsDataProvider", dataProviderClass = DataProviders.class,
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkWrongLanguageWords(String[] texts, Language lang) {
         SoftAssert soft = new SoftAssert();
 
@@ -218,7 +228,8 @@ public class CheckTextsTestsHW {
     }
 
     @Test(description = "Check all methods for request and corresponding server responses",
-            dataProviderClass = DataProviders.class, dataProvider = "methodsDataProvider")
+            dataProviderClass = DataProviders.class, dataProvider = "methodsDataProvider",
+            retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkRequestWithDifferentMethods(Method requestMethod, int expectedCode, String expectedStatusLine) {
         YandexSpellerApi.with()
                 .texts("This", "is", "test")

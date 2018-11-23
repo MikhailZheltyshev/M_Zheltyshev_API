@@ -146,9 +146,9 @@ public class TestYandexSpellerJSON {
         assertThat("expected number of answers is wrong.", answers.size(), equalTo(3));
         assertThat(answers.get(0).word, equalTo("motherr"));
         assertThat(answers.get(1).word, equalTo("fatherr"));
-        assertThat(answers.get(0).s.get(0), equalTo("mother"));
-        assertThat(answers.get(1).s.get(0), equalTo("father"));
-        assertThat(answers.get(2).s.get(0), equalTo(SimpleWord.BROTHER.wrongVer()));
+        assertThat(answers.get(0).suggestions.get(0), equalTo("mother"));
+        assertThat(answers.get(1).suggestions.get(0), equalTo("father"));
+        assertThat(answers.get(2).suggestions.get(0), equalTo(SimpleWord.BROTHER.wrongVer()));
     }
 
 
