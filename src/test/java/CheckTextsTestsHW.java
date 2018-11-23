@@ -4,10 +4,9 @@ import dataProviders.DataProviders;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 
@@ -24,8 +23,6 @@ public class CheckTextsTestsHW {
             dataProvider = "wrongWordDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkWrongWordsCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).callApi());
@@ -34,16 +31,18 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is not empty
-            if (!answers.get(i).isEmpty()) {
-                soft.assertEquals(answers.get(i).get(0).suggestions, expectedSuggestions[i], "Proposed suggestion is not expected:");
-            } else {
-                soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is not empty
+                if (!answers.get(i).isEmpty()) {
+                    soft.assertThat(answers.get(i).get(0).suggestions)
+                            .as("Actual suggestions")
+                            .isEqualTo(expectedSuggestions[i]);
+                } else {
+                    soft.assertThat(answers.get(i)).as("Actual suggestions").isEmpty();
+                }
             }
         }
-
-        soft.assertAll();
     }
 
     // Seems to be a BUG - no correction for words with wrong capitalization.
@@ -51,8 +50,6 @@ public class CheckTextsTestsHW {
             dataProvider = "capitalizationDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkCapitalizationCorrection(String[] texts, Language lang, List[] expectedSuggestions) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).callApi());
@@ -61,23 +58,25 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is not empty
-            if (!answers.get(i).isEmpty()) {
-                soft.assertEquals(answers.get(i).get(0).suggestions, expectedSuggestions[i], "Proposed suggestion is not expected:");
-            } else {
-                soft.assertFalse(answers.get(i).isEmpty(), "Received response is empty:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is not empty
+                if (!answers.get(i).isEmpty()) {
+                    soft.assertThat(answers.get(i).get(0).suggestions)
+                            .as("Actual suggestions")
+                            .isEqualTo(expectedSuggestions[i]);
+                } else {
+                    soft.assertThat(answers.get(i)).as("Actual suggestions for text <" + texts[i] + ">")
+                            .isEqualTo(expectedSuggestions[i]);
+                }
             }
         }
-        soft.assertAll();
     }
 
     @Test(description = "Check there is no correction for correct words",
             dataProvider = "correctWordsDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkNoSuggestionForCorrectWords(String[] texts, Language lang) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).callApi());
@@ -86,19 +85,19 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is empty
-            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for correct words:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is empty
+                soft.assertThat(answers.get(i)).as("Suggestion for the correct word <" + texts[i] + ">")
+                        .isEmpty();
+            }
         }
-        soft.assertAll();
     }
 
     @Test(description = "Check IGNORE_DIGITS option for all supported languages",
             dataProvider = "alphaNumericStringsDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkIgnoreDigits(String[] texts, Language lang) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).options(IGNORE_DIGITS).callApi());
@@ -107,19 +106,19 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is empty
-            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for alphanumeric strings:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is empty
+                soft.assertThat(answers.get(i)).as("Suggestion for the alphanumeric string <" + texts[i] + ">")
+                        .isEmpty();
+            }
         }
-        soft.assertAll();
     }
 
     @Test(description = "Check IGNORE_URLS option for all supported languages",
             dataProvider = "URLDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkIgnoreURLs(String[] texts, Language lang) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).options(IGNORE_URLS).callApi());
@@ -128,20 +127,21 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is empty
-            soft.assertTrue(answers.get(i).isEmpty(), "Received response is not empty for URLs:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is empty
+                soft.assertThat(answers.get(i))
+                        .as("Suggestion for URL <" + texts[i] + ">")
+                        .isEmpty();
+            }
         }
-        soft.assertAll();
     }
 
     //BUG - server answers with an empty responses for requests with repeated words even if the FIND_REPEAT_WORDS option activated.
     @Test(description = "Check FIND_REPEAT_WORDS option for all supported languages",
             dataProvider = "repeatWordsDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
-    public void checkRepeatWords(String[] texts, Language lang) {
-        SoftAssert soft = new SoftAssert();
-
+    public void checkRepeatWords(String[] texts, String[] expectedSuggestion, Language lang) {
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).options(FIND_REPEAT_WORDS).callApi());
@@ -150,11 +150,14 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is not empty
-            soft.assertFalse(answers.get(i).isEmpty(), "Received response has no suggestions for strings with repeated words:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is not empty
+                soft.assertThat(answers.get(i))
+                        .as("Suggestion for string with repeated words <" + texts[i] + "> and lang <" + lang + ">")
+                        .isEqualTo(expectedSuggestion[i]);
+            }
         }
-        soft.assertAll();
     }
 
     // Server always throws 504 error for incorrect "options" value - unexpected behavior.
@@ -191,7 +194,7 @@ public class CheckTextsTestsHW {
                 .body(Matchers.equalTo("SpellerService: Invalid parameter 'lang'"));
     }
 
-    @Test(description = "Check the server'suggestions response for the request with incorrect text format type",
+    @Test(description = "Check the server's response for the request with incorrect text format type",
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void incorrectFormatTest() {
         RestAssured
@@ -211,8 +214,6 @@ public class CheckTextsTestsHW {
             dataProvider = "wrongLanguageWordsDataProvider", dataProviderClass = DataProviders.class,
             retryAnalyzer = utils.RetryAnalyzer.class)
     public void checkWrongLanguageWords(String[] texts, Language lang) {
-        SoftAssert soft = new SoftAssert();
-
         List<List<YandexSpellerAnswer>> answers =
                 YandexSpellerApi.getYandexSpellerAnswersArray(
                         YandexSpellerApi.with().texts(texts).language(lang).callApi());
@@ -221,11 +222,14 @@ public class CheckTextsTestsHW {
         assertThat(answers.size(), equalTo(texts.length));
 
         //Assert that suggestion are expected
-        for (int i = 0; i < texts.length; i++) {
-            //Check that current response array item is not empty
-            soft.assertTrue(answers.get(i).isEmpty(), "Received response is empty for strings with wrong language words:");
+        try (AutoCloseableSoftAssertions soft = new AutoCloseableSoftAssertions()) {
+            for (int i = 0; i < texts.length; i++) {
+                //Check that current response array item is not empty
+                soft.assertThat(answers.get(i))
+                        .as("Response for correct word <" + texts[i] + "> and lang <" + lang + ">")
+                        .isEmpty();
+            }
         }
-        soft.assertAll();
     }
 
     @Test(description = "Check all methods for request and corresponding server responses",
@@ -243,3 +247,4 @@ public class CheckTextsTestsHW {
                 .statusLine(expectedStatusLine);
     }
 }
+

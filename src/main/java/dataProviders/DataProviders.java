@@ -59,7 +59,7 @@ public class DataProviders {
                 //English case
                 {new String[]{"john", "washington"},
                         EN,
-                        new List[]{Arrays.asList("john"),
+                        new List[]{Arrays.asList("John"),
                                 Arrays.asList("Washington")}}
         };
     }
@@ -126,23 +126,33 @@ public class DataProviders {
     @DataProvider(parallel = true)
     public Object[][] repeatWordsDataProvider() {
         return new Object[][]{
-                //Ukrainian case
-                {new String[]{"Він дуже любив любив кататися на лижах.",
-                        "Сьогодні дуже жаркий день день.",
-                        "Я втратив втратив ключі."},
+                        //Ukrainian case
+                        {new String[]{"Він дуже любив любив кататися на лижах.",
+                                "Сьогодні дуже жаркий день день.",
+                                "Я втратив втратив ключі."},
+
+                        new String[]{"Він дуже любив кататися на лижах.",
+                                "Сьогодні дуже жаркий день.",
+                                "Я втратив ключі."},
                         UK},
 
-                //Russian case
-                {new String[]{"Я подумаю подумаю над этим позже.",
-                        "Он никогда не не был в Африке.",
-                        "Его имя неизвестно неизвестно."
-                },
+                        //Russian case
+                        {new String[]{"Я подумаю подумаю над этим позже.",
+                                "Он никогда не не был в Африке.",
+                                "Его имя неизвестно неизвестно."},
+
+                        new String[]{"Я подумаю над этим позже.",
+                                "Он никогда не был в Африке.",
+                                "Его имя неизвестно."},
                         RU},
 
-                //English case
-                {new String[]{"It supposed to be in your your closet.",
-                        "I'll be be back.",
-                        "You better better believe it."},
+                        //English case
+                        {new String[]{"It supposed to be in your your closet.",
+                                "I'll be be back.",
+                                "You better better believe it."},
+                        new String[]{"It supposed to be in your closet.",
+                                "I'll be back.",
+                                "You better believe it."},
                         EN}
         };
     }
